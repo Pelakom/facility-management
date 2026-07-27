@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+/* 1. Force the material library into Tailwind's 'base' layer so utilities can beat it */
+@import "material-symbols" layer(base);
+
+/* 2. Put your overrides in the 'base' layer too, without !important */
+@layer base {
+    .material-symbols-outlined {
+        font-size: inherit;
+        line-height: inherit;
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    /* 1. Changed to range to unlock all variable weights */
+    font-display: swap;
+    src: url('/assets/font.ttf') format('truetype');
+}
+
+@theme {
+    --font-sans: "Inter", system-ui, sans-serif;
+
+    /* 2. Overwrite default Tailwind weights with your custom variable numbers */
+    --font-weight-normal: 400;
+    --font-weight-medium: 525;
+    /* Custom variable weight */
+    --font-weight-semibold: 630;
+    /* Custom variable weight */
+    --font-weight-bold: 750;
+    /* Custom variable weight */
+}
