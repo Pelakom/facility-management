@@ -37,7 +37,7 @@ function createRequest() {
 
 
 
-function editList(listId, name, duration, purpose, amount) {
+function editList(listId, itemId, name, duration, purpose, amount) {
     const boxTitle = document.getElementById('box-title');
     const boxDescription = document.getElementById('box-description');
     const listIdForm = document.getElementById('selected-list-id');
@@ -47,11 +47,13 @@ function editList(listId, name, duration, purpose, amount) {
     const purposeInput = document.getElementById('purpose');
     listIdForm.value = listId;
 
+
     boxTitle.textContent = 'Editing The Request';
     boxDescription.textContent = 'Modify the request for the loan.';
-    selectOption(listId, name);
+    selectOption(itemId, name);
     amountInput.value = amount
-
+    startDateInput.value = duration.split(' - ')[0];
+    endDateInput.value = duration.split(' - ')[1];
     purposeInput.value = purpose;
     
 

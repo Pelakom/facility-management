@@ -3,15 +3,8 @@ require_once __DIR__ . '/../../config/db.php';
 // Fetch data using PDO
 
 
-
-
-
-
-
+// Fetch data using PDO
 $useridParam = $_GET['userid'] ?? 1;
-
-
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
@@ -25,33 +18,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // If validation passes, sanitize and process data safely
-        $itemId    = htmlspecialchars($_POST['selected-item-id']);
+        // Fix 1: Use intval() for Foreign Keys to guarantee an integer is sent to MySQL
+        $itemId    = intval($_POST['selected-item-id']);
+        $amount    = intval($_POST['amount']);
+
+        // Fix 2: Removed the double dollar sign ($$) typo
+        $useridParam = intval($_POST['userid'] ?? $useridParam);
+
         $startDate = htmlspecialchars($_POST['startdate']);
         $endDate   = htmlspecialchars($_POST['enddate']);
-        $amount    = intval($_POST['amount']);
         $purpose   = htmlspecialchars($_POST['purpose']);
 
-        // Continue with database processing...
-        $stmt = $pdo->prepare("INSERT INTO lists (item_id, user_id, total_amount, purpose, duration) VALUES (:itemId, :userId, :totalAmount, :purpose, :duration)");
-        $stmt->execute([':itemId' => $itemId, ':userId' => $useridParam, ':totalAmount' => $amount, ':purpose' => $purpose, ':duration' => ($startDate . ' - ' . $endDate)]);
+        // Check if this is an UPDATE or an INSERT
+        $isUpdate = !empty($_POST['selected-list-id']) && trim($_POST['selected-list-id']) !== '';
+
+        if (!$isUpdate) {
+            $pdoQuery = "INSERT INTO lists (item_id, user_id, total_amount, purpose, duration) 
+                         VALUES (:itemId, :userId, :totalAmount, :purpose, :duration)";
+        } else {
+            $pdoQuery = "UPDATE lists SET item_id = :itemId, total_amount = :totalAmount, 
+                         purpose = :purpose, duration = :duration 
+                         WHERE id = :selectedListId AND user_id = :userId";
+        }
+
+        // print_r($_POST);
+        // echo $pdoQuery;
+        // exit;
+
+        $stmt = $pdo->prepare($pdoQuery);
+
+        // Build the base parameters
+        $params = [
+            ':itemId'      => $itemId,
+            ':userId'      => $useridParam,
+            ':totalAmount' => $amount,
+            ':purpose'     => $purpose,
+            ':duration'    => ($startDate . ' - ' . $endDate)
+        ];
+
+        // Fix 3: Add the missing colon to the selectedListId parameter
+        if ($isUpdate) {
+            $params[':selectedListId'] = intval($_POST['selected-list-id']);
+        }
+
+        $stmt->execute($params);
     } catch (InvalidArgumentException $e) {
-        // Catch the validation failure and handle it (e.g., show an error message or log it)
         http_response_code(400); // Bad Request
         echo "Validation Error: " . $e->getMessage();
         exit;
+    } catch (PDOException $e) {
+        // Catch Database-specific errors separately to debug easily
+        http_response_code(500);
+        echo "Database Error: " . $e->getMessage();
+        // If you see this, $itemId is definitely passing a number that isn't in the items table
+        exit;
     } catch (Exception $e) {
-        // Catch any other unexpected errors
         http_response_code(500); // Internal Server Error
-        echo "An unexpected error occurred.";
-        echo $e->getMessage();
+        echo "An unexpected error occurred: " . $e->getMessage();
         exit;
     }
 }
 
 
-
-$stmt = $pdo->prepare("SELECT lists.id AS list_id,lists.user_id,items.name,lists.total_amount,lists.purpose,lists.duration,lists.status FROM lists INNER JOIN items ON lists.item_id = items.id WHERE lists.user_id = :id ORDER BY created_at DESC");
+$stmt = $pdo->prepare("SELECT lists.id AS list_id,lists.user_id,items.name,lists.item_id,lists.total_amount,lists.purpose,lists.duration,lists.status FROM lists INNER JOIN items ON lists.item_id = items.id WHERE lists.user_id = :id ORDER BY created_at DESC");
 $stmt->execute(['id' => $useridParam]);
 $lists = $stmt->fetchAll();
 
@@ -334,7 +363,7 @@ foreach ($lists as $list) {
                                 </div>
                                 <?php if ($list['status'] == 'pending'): ?>
                                     <div class="h-full flex flex-row items-center w-fit gap-2">
-                                        <span class="font-semibold material-symbols-outlined text-xl cursor-pointer text-gray-700 hover:text-[#0D5ACC]" onclick="editList(<?php echo $list['list_id']; ?>, '<?php echo htmlspecialchars($list['name']); ?>', '<?php echo htmlspecialchars($list['duration']); ?>', '<?php echo htmlspecialchars($list['purpose']); ?>', '<?php echo htmlspecialchars($list['total_amount']); ?>')" title="Edit">edit</span>
+                                        <span class="font-semibold material-symbols-outlined text-xl cursor-pointer text-gray-700 hover:text-[#0D5ACC]" onclick="editList(<?php echo $list['list_id']; ?>,<?php echo $list['item_id']; ?> , '<?php echo htmlspecialchars($list['name']); ?>', '<?php echo htmlspecialchars($list['duration']); ?>', '<?php echo htmlspecialchars($list['purpose']); ?>', '<?php echo htmlspecialchars((int)$list['total_amount']); ?>')" title="Edit">edit</span>
                                         <div class="h-full w-fit flex flex-col py-2">
                                             <div class="border-r-2 border-gray-300 flex-1"></div>
                                         </div>
