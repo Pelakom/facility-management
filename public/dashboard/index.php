@@ -24,26 +24,26 @@ $user = $stmt->fetch();
     <aside class="w-64 bg-white border-r border-r-gray-200 flex flex-col p-8 gap-3">
         <div class="h-24 w-full bg-[url('/assets/brand.png')] bg-contain bg-center bg-no-repeat"></div>
         <p class="text-gray-400 font-normal text-xs">Menu</p>
-        <section class="h-fit w-full flex flex-row text-gray-700 items-center gap-4 rounded-sm px-2 py-1 transition-colors duration-20 hover:bg-[#EFEFEF]">
+        <section class="cursor-pointer h-fit w-full flex flex-row items-center gap-4 rounded-sm px-2 py-1 transition-colors duration-20 bg-[#0D5ACC] hover:bg-[#164893]" onclick="window.location.replace('/dashboard')">
             <span class="material-symbols-outlined text-xl">space_dashboard</span>
             <p class="font-medium text-sm">Dashboard</p>
         </section>
-        <section class="h-fit w-full flex flex-row text-gray-700 items-center gap-4 rounded-sm px-2 py-1 transition-colors duration-20 hover:bg-[#EFEFEF]">
-            <span class="material-symbols-outlined text-xl">package_2</span>
+        <section class="cursor-pointer h-fit w-full flex flex-row text-gray-700 items-center gap-4 rounded-sm px-2 py-1 transition-colors duration-20 hover:bg-[#EFEFEF] onclick=" onclick="window.location.replace('/dashboard/items.php')">
+            <span class=" material-symbols-outlined text-xl">package_2</span>
             <p class="font-medium text-sm">Item Loan</p>
         </section>
-        <section class="h-fit w-full flex flex-row text-gray-700 items-center gap-4 rounded-sm px-2 py-1 transition-colors duration-20 hover:bg-[#EFEFEF]">
+        <section class="cursor-pointer h-fit w-full flex flex-row text-gray-700 items-center gap-4 rounded-sm px-2 py-1 transition-colors duration-20 hover:bg-[#EFEFEF]">
             <span class="material-symbols-outlined text-xl">meeting_room</span>
             <p class="font-medium text-sm">Room Reservation</p>
         </section>
-        <section class="h-fit w-full flex flex-row text-gray-700 items-center gap-4 rounded-sm px-2 py-1 transition-colors duration-20 hover:bg-[#EFEFEF]">
+        <section class="cursor-pointer h-fit w-full flex flex-row text-gray-700 items-center gap-4 rounded-sm px-2 py-1 transition-colors duration-20 hover:bg-[#EFEFEF]">
             <span class="material-symbols-outlined text-xl">package_2</span>
             <p class="font-medium text-sm">Complain</p>
         </section>
         <div class="px-2 h-fit">
             <div class="border-b border-gray-300"></div>
         </div>
-        <section class="h-fit w-full flex flex-row text-gray-700 items-center gap-4 rounded-sm px-2 py-1 transition-colors duration-20 hover:bg-[#EFEFEF]">
+        <section class="cursor-pointer h-fit w-full flex flex-row text-gray-700 items-center gap-4 rounded-sm px-2 py-1 transition-colors duration-20 hover:bg-[#EFEFEF]">
             <span class="material-symbols-outlined text-xl">history</span>
             <p class="font-medium text-sm">History</p>
         </section>
