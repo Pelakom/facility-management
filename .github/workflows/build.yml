@@ -1,0 +1,14 @@
+name: Latihan
+
+on: 
+    push: 
+        
+    workflow_dispatch: 
+
+    schedule:
+        - cron: '0 0 * * *'
+          timezone: 'Asia/Jakarta'
+
+jobs:
+    build-image:
+        runs-on: ubuntu-latest

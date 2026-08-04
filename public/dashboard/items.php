@@ -221,7 +221,7 @@ foreach ($lists as $list) {
                         </button>
                         <button type="submit" id="submit-btn"
                             class="w-full rounded-xl bg-gray-200 py-3 cursor-not-allowed text-sm font-semibold text-gray-400" disabled>
-                            Create
+                            Submit
                         </button>
                     </div>
                 </form>
@@ -363,6 +363,10 @@ foreach ($lists as $list) {
                                 </div>
                                 <?php if ($list['status'] == 'pending'): ?>
                                     <div class="h-full flex flex-row items-center w-fit gap-2">
+                                        <span class="font-semibold material-symbols-outlined text-xl cursor-pointer text-gray-700 hover:text-[#0D5ACC]" onclick="editList(<?php echo $list['list_id']; ?>,<?php echo $list['item_id']; ?> , '<?php echo htmlspecialchars($list['name']); ?>', '<?php echo htmlspecialchars($list['duration']); ?>', '<?php echo htmlspecialchars($list['purpose']); ?>', '<?php echo htmlspecialchars((int)$list['total_amount']); ?>')" title="Edit">edit</span>
+                                        <div class="h-full w-fit flex flex-col py-2">
+                                            <div class="border-r-2 border-gray-300 flex-1"></div>
+                                        </div>
                                         <span class="font-semibold material-symbols-outlined text-xl cursor-pointer text-gray-700 hover:text-[#0D5ACC]" onclick="editList(<?php echo $list['list_id']; ?>,<?php echo $list['item_id']; ?> , '<?php echo htmlspecialchars($list['name']); ?>', '<?php echo htmlspecialchars($list['duration']); ?>', '<?php echo htmlspecialchars($list['purpose']); ?>', '<?php echo htmlspecialchars((int)$list['total_amount']); ?>')" title="Edit">edit</span>
                                         <div class="h-full w-fit flex flex-col py-2">
                                             <div class="border-r-2 border-gray-300 flex-1"></div>
