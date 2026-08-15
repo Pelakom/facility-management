@@ -9,6 +9,8 @@ services:
       - DB_NAME=facility_db
       - DB_USER=facility_manager
       - DB_PASS=facility_db_pass
+    # volumes: # fallback env
+    #   - ./.env:/var/www/html/.env:Z
     depends_on:
       - mariadb
   mariadb:
