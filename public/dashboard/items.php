@@ -6,6 +6,12 @@ require_once __DIR__ . '/../config/db.php';
 // Fetch data using PDO
 $useridParam = $_GET['userid'] ?? 1;
 
+$stmt = $pdo->prepare("SELECT * FROM users WHERE id = :id");
+$stmt->execute(['id' => $useridParam]);
+$user = $stmt->fetch();
+
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (!isset($_POST['deleteId']) || trim($_POST['deleteId']) === '')) {
     try {
 
@@ -16,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (!isset($_POST['deleteId']) || trim
         foreach ($requiredFields as $field) {
             // Check if the key does not exist or contains an empty string/null
             if (!isset($_POST[$field]) || trim($_POST[$field]) === '') {
-                
+
                 throw new InvalidArgumentException("Missing or empty required field: " . $field);
             }
         }
@@ -80,10 +86,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (!isset($_POST['deleteId']) || trim
         echo "An unexpected error occurred: " . $e->getMessage();
         exit;
     }
-}elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['deleteId']) || trim($_POST['deleteId']) !== '')) {
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['deleteId']) || trim($_POST['deleteId']) !== '')) {
     try {
         $stmt = $pdo->prepare("DELETE FROM lists WHERE id = :deleteId");
-        $stmt->execute([':deleteId'=> $_POST['deleteId']]);
+        $stmt->execute([':deleteId' => $_POST['deleteId']]);
     } catch (InvalidArgumentException $e) {
         http_response_code(400); // Bad Request
         echo "Validation Error: " . $e->getMessage();
@@ -302,14 +308,14 @@ foreach ($lists as $list) {
         <main class="flex-1 flex flex-col gap-4 min-h-0">
             <header class="bg-white border-gray-200 rounded-2xl items-center border flex flex-row gap-2 py-4 px-6 text-gray-500 shrink-0">
                 <div class="flex-1 flex flex-col">
-                    <h1 class="text-2xl text-gray-900 font-semibold">Welcome, name</h1>
+                    <h1 class="text-2xl text-gray-900 font-semibold">Welcome, <?php echo $user['name']; ?></h1>
                     <p class="text-[0.9rem]">Manage and request your reservations.</p>
                 </div>
                 <div class="flex flex-row p-2 h-full gap-4">
                     <div class="rounded-full border-gray-400 border h-full aspect-square bg-[url('/assets/profile.jpeg')] bg-contain bg-center bg-no-repeat overflow-hidden"></div>
                     <div class="flex flex-col text-[0.75rem] justify-center">
-                        <p class="font-semibold">bombotron</p>
-                        <p>email</p>
+                        <p class="font-semibold"><?php echo explode(' ', $user['name'])[0]; ?></p>
+                        <p><?php echo $user['email']; ?></p>
                     </div>
                 </div>
                 <div class="flex p-2 h-full items-center">
