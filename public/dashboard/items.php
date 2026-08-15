@@ -1,19 +1,22 @@
 <?php
-require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../config/db.php';
 // Fetch data using PDO
 
 
 // Fetch data using PDO
 $useridParam = $_GET['userid'] ?? 1;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (!isset($_POST['deleteId']) || trim($_POST['deleteId']) === '')) {
     try {
+
+
         // Define the required fields from your form
         $requiredFields = ['selected-item-id', 'startdate', 'enddate', 'amount', 'purpose'];
 
         foreach ($requiredFields as $field) {
             // Check if the key does not exist or contains an empty string/null
             if (!isset($_POST[$field]) || trim($_POST[$field]) === '') {
+                
                 throw new InvalidArgumentException("Missing or empty required field: " . $field);
             }
         }
@@ -62,6 +65,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $stmt->execute($params);
+    } catch (InvalidArgumentException $e) {
+        http_response_code(400); // Bad Request
+        echo "Validation Error: " . $e->getMessage();
+        exit;
+    } catch (PDOException $e) {
+        // Catch Database-specific errors separately to debug easily
+        http_response_code(500);
+        echo "Database Error: " . $e->getMessage();
+        // If you see this, $itemId is definitely passing a number that isn't in the items table
+        exit;
+    } catch (Exception $e) {
+        http_response_code(500); // Internal Server Error
+        echo "An unexpected error occurred: " . $e->getMessage();
+        exit;
+    }
+}elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['deleteId']) || trim($_POST['deleteId']) !== '')) {
+    try {
+        $stmt = $pdo->prepare("DELETE FROM lists WHERE id = :deleteId");
+        $stmt->execute([':deleteId'=> $_POST['deleteId']]);
     } catch (InvalidArgumentException $e) {
         http_response_code(400); // Bad Request
         echo "Validation Error: " . $e->getMessage();
@@ -127,14 +149,14 @@ foreach ($lists as $list) {
     <dialog id="request-modal"
         class="m-auto w-full max-w-3xl max-h-[90vh] overflow-visible  shadow-2xl border-none backdrop:bg-black/40 backdrop:backdrop-blur-xs rounded-xl focus:outline-none">
 
-        <div class="flex flex-col rounded-xl bg-white p-8 focus:outline-none" id="main-dialog-box">
+        <div class="flex flex-col rounded-xl bg-white p-8 focus:outline-none hidden" id="main-dialog-box">
             <div class="flex flex-col gap-5 focus:outline-none" id="create-request-box">
                 <div class="text-center">
                     <h2 autofocus tabindex="-10000" class="text-xl font-bold text-gray-900 focus:outline-none" id="box-title">Add A New Request</h2>
                     <p class="text-sm text-gray-500 mt-1" id="box-description">Reserve a request for loan.</p>
                 </div>
 
-                <form method="POST" action="" class="flex flex-col gap-4 mt-2">
+                <form id="itemEdit-id" method="POST" action="" class="flex flex-col gap-4 mt-2">
 
                     <div class="flex flex-col w-full h-fit gap-3">
                         <div class="relative w-full">
@@ -160,7 +182,7 @@ foreach ($lists as $list) {
                                     </section>
                                 <?php endforeach; ?>
                                 <section id="no-results"
-                                    class="hidden optiondocument.addEventListener()-item w-full h-fit flex flex-row justify-between p-2 transition-colors duration-20 bg-[#fafafafa] hover:bg-[#EFEFEF] items-center cursor-not-allowed">
+                                    class="hidden option-item w-full h-fit flex flex-row justify-between p-2 transition-colors duration-20 bg-[#fafafafa] hover:bg-[#EFEFEF] items-center cursor-not-allowed">
                                     <div class="h-fit w-full flex flex-col gap-1">
                                         <p class="font-medium text-sm text-gray-700">No Results</p>
                                     </div>
@@ -225,9 +247,21 @@ foreach ($lists as $list) {
                         </button>
                     </div>
                 </form>
+                <form id="itemDelete-id" method="POST" action="" class="flex flex-col gap-4 mt-2">
+                    <input type="hidden" name="deleteId" id="delete-id">
+                    <div class="grid grid-cols-2 gap-4 mt-2">
+                        <button type="button" onclick="document.getElementById('request-modal').close()"
+                            class="w-full rounded-xl border cursor-pointer border-gray-300 py-3 text-sm font-semibold text-gray-700 hover:text-white hover:bg-blue-600">
+                            Cancel
+                        </button>
+                        <button type="submit" id="remove-btn"
+                            class="w-full rounded-xl bg-red-600 py-3 hover:bg-red-700 text-sm font-semibold text-white">
+                            Confirm
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="flex flex-col rounded-xl bg-white p-8 focus:outline-none hidden" id="cancel-box"></div>
 
     </dialog>
 
@@ -367,7 +401,7 @@ foreach ($lists as $list) {
                                         <div class="h-full w-fit flex flex-col py-2">
                                             <div class="border-r-2 border-gray-300 flex-1"></div>
                                         </div>
-                                        <span class="font-semibold material-symbols-outlined text-xl cursor-pointer text-gray-700 hover:text-[#0D5ACC]" onclick="editList(<?php echo $list['list_id']; ?>,<?php echo $list['item_id']; ?> , '<?php echo htmlspecialchars($list['name']); ?>', '<?php echo htmlspecialchars($list['duration']); ?>', '<?php echo htmlspecialchars($list['purpose']); ?>', '<?php echo htmlspecialchars((int)$list['total_amount']); ?>')" title="Edit">edit</span>
+                                        <span class="font-semibold material-symbols-outlined text-xl cursor-pointer text-[#c61f1f] hover:text-[#9d1912]" onclick="removeList(<?php echo $list['list_id']; ?>);" title="Edit">delete</span>
                                         <div class="h-full w-fit flex flex-col py-2">
                                             <div class="border-r-2 border-gray-300 flex-1"></div>
                                         </div>
@@ -393,7 +427,7 @@ foreach ($lists as $list) {
 </body>
 
 <noscript>
-    <?php print_r($_POST ?? []) ?>
+
 </noscript>
 
 </html>

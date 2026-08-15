@@ -25,8 +25,21 @@ function createRequest() {
     const boxTitle = document.getElementById('box-title');
     const boxDescription = document.getElementById('box-description');
     const listIdForm = document.getElementById('selected-list-id');
+    const editItemForm = document.getElementById('itemEdit-id')
+    const deleteItemForm = document.getElementById('itemDelete-id')
     listIdForm.value = '';
 
+    const createBox = document.getElementById('main-dialog-box');
+
+    if (createBox.classList.contains('hidden')) {
+        createBox.classList.remove('hidden');
+    }
+    if (editItemForm.classList.contains('hidden')) {
+        editItemForm.classList.remove('hidden');
+    }
+    if (!deleteItemForm.classList.contains('hidden')) {
+        deleteItemForm.classList.add('hidden');
+    }
 
     boxTitle.textContent = 'Add A New Request';
     boxDescription.textContent = 'Reserve a request for loan.';
@@ -46,8 +59,19 @@ function editList(listId, itemId, name, duration, purpose, amount) {
     const amountInput = document.getElementById('amount');
     const purposeInput = document.getElementById('purpose');
     listIdForm.value = listId;
+    const editItemForm = document.getElementById('itemEdit-id')
+    const deleteItemForm = document.getElementById('itemDelete-id')
+    const createBox = document.getElementById('main-dialog-box');
 
-
+    if (createBox.classList.contains('hidden')) {
+        createBox.classList.remove('hidden');
+    }
+    if (editItemForm.classList.contains('hidden')) {
+        editItemForm.classList.remove('hidden');
+    }
+    if (!deleteItemForm.classList.contains('hidden')) {
+        deleteItemForm.classList.add('hidden');
+    }
     boxTitle.textContent = 'Editing The Request';
     boxDescription.textContent = 'Modify the request for the loan.';
     selectOption(itemId, name);
@@ -55,11 +79,44 @@ function editList(listId, itemId, name, duration, purpose, amount) {
     startDateInput.value = duration.split(' - ')[0];
     endDateInput.value = duration.split(' - ')[1];
     purposeInput.value = purpose;
-    
+
 
     document.getElementById('request-modal').showModal()
 
 }
+
+
+function removeList(listId) {
+    const boxTitle = document.getElementById('box-title');
+    const boxDescription = document.getElementById('box-description');
+    const deleteIdForm = document.getElementById('delete-id');
+    const editItemForm = document.getElementById('itemEdit-id')
+    const deleteItemForm = document.getElementById('itemDelete-id')
+    deleteIdForm.value = listId;
+
+    const createBox = document.getElementById('main-dialog-box');
+
+
+    if (createBox.classList.contains('hidden')) {
+        createBox.classList.remove('hidden');
+    }
+    if (!editItemForm.classList.contains('hidden')) {
+        editItemForm.classList.add('hidden');
+    }
+    if (deleteItemForm.classList.contains('hidden')) {
+        deleteItemForm.classList.remove('hidden');
+    }
+
+    boxTitle.textContent = 'DELETION NOTICE';
+    boxDescription.textContent = 'Please confirm the deletion.';
+
+
+    document.getElementById('request-modal').showModal()
+
+}
+
+
+
 
 
 

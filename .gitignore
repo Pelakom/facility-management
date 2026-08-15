@@ -6,3 +6,5 @@ coverage/
 public/test
 
 public/css
+
+docker-compose.yml
