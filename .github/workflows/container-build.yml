@@ -12,11 +12,23 @@ jobs:
               uses: actions/checkout@master
 
             - name: Build fm-builder target
-              run: docker build --target fm-builder .
+              run: docker build --target fm-builder -t fm-builder:${{ github.sha }} . 
 
             - name: Build fm-php target
-              run: docker build --target fm-php .
+              run: docker build --target fm-php -t fm-php:${{ github.sha }} .
 
             - name: Build fm-nginx target
-              run: docker build --target fm-nginx .
+              run: docker build --target fm-nginx -t fm-nginx:${{ github.sha }} .
+
+            - name: Export Images
+              run: |
+                docker save fm-builder:${{ github.sha }} -o fm-builder.tar
+                docker save fm-php:${{ github.sha }} -o fm-php.tar
+                docker save fm-nginx:${{ github.sha }} -o fm-nginx.tar
+            - name: Upload Image Artifacts
+              uses: actions/upload-artifact@v7
+              with:
+                name: Images
+                path: fm-*.tar
+                archive: false
               
