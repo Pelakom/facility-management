@@ -25,11 +25,10 @@ jobs:
                 docker save fm-builder:${{ github.sha }} -o fm-builder.tar
                 docker save fm-php:${{ github.sha }} -o fm-php.tar
                 docker save fm-nginx:${{ github.sha }} -o fm-nginx.tar
-                
+
             - name: Upload Image Artifacts
               uses: actions/upload-artifact@v7
               with:
                 name: Images
                 path: fm-*.tar
-                archive: false
               
