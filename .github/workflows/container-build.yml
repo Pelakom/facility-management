@@ -1,0 +1,22 @@
+name: Build Container Images
+on:
+    push: 
+    workflow_dispatch: 
+
+jobs:
+    container-build:
+        name: Set Up Environment
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@master
+
+            - name: Build fm-builder target
+              run: docker build --target fm-builder .
+
+            - name: Build fm-php target
+              run: docker build --target fm-php .
+              
+            - name: Build fm-nginx target
+              run: docker build --target fm-nginx .
+              
