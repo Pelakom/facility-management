@@ -5,7 +5,7 @@ on:
 
 jobs:
     container-build:
-        name: Set Up Environment
+        name: Build Container
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -16,7 +16,7 @@ jobs:
 
             - name: Build fm-php target
               run: docker build --target fm-php .
-              
+
             - name: Build fm-nginx target
               run: docker build --target fm-nginx .
               
