@@ -1,4 +1,4 @@
-name: Latihan
+name: Build Test
 
 on: 
     push: 
