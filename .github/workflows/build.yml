@@ -10,5 +10,16 @@ on:
           timezone: 'Asia/Jakarta'
 
 jobs:
-    build-image:
+    test-build:
         runs-on: ubuntu-latest
+        container:
+          image: node:lts-alpine
+        steps:
+            - name: Check Out
+              uses: actions/checkout@master
+            
+            - name: Setup and build
+              run: |
+                corepack enable
+                pnpm install --frozen-lockfile
+                pnpm run build
